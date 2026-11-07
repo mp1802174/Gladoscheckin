@@ -128,10 +128,11 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
     req_points_url = f"{base_url}/api/user/points"
     req_exchange_url = f"{base_url}/api/user/exchange"
     req_checkin_data = {"token": target_domain}
+    ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" if "glados" in target_domain else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     req_headers = {
         "referer": f"{base_url}/console/checkin",
         "origin": base_url,
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "user-agent": ua,
         "content-type": "application/json;charset=UTF-8"
     }
 
@@ -141,7 +142,7 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
     remaining_points = "获取剩余积分失败"
     exchange_msg = "兑换跳过或失败"
 
-    checkin_response = make_request(CHECKIN_URL, 'POST', HEADERS_TEMPLATE, CHECKIN_DATA, cookies=cookie)
+    checkin_response = make_request(req_checkin_url, 'POST', req_headers, req_checkin_data, cookies=cookie)
     if not checkin_response:
         return status_msg, points_gained, remaining_days, remaining_points, exchange_msg
 
@@ -162,7 +163,7 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
         logger.error(f"解析签到响应 JSON 失败: {checkin_response.text}")
         return status_msg, points_gained, remaining_days, remaining_points, exchange_msg
 
-    status_response = make_request(STATUS_URL, 'GET', HEADERS_TEMPLATE, cookies=cookie)
+    status_response = make_request(req_status_url, 'GET', req_headers, cookies=cookie)
     if status_response:
         try:
             status_data = status_response.json()
@@ -180,7 +181,7 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
     else:
         remaining_days = "获取剩余天数失败 (HTTP请求失败)"
 
-    points_response = make_request(POINTS_URL, 'GET', HEADERS_TEMPLATE, cookies=cookie)
+    points_response = make_request(req_points_url, 'GET', req_headers, cookies=cookie)
     if points_response:
         try:
             points_data = points_response.json()
@@ -207,7 +208,7 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
     required_points = EXCHANGE_POINTS.get(exchange_plan, 500) 
     if current_points_numeric >= required_points:
         logger.info(f"开始兑换 {exchange_plan} 计划 (需要 {required_points} 积分)")
-        exchange_response = make_request(EXCHANGE_URL, 'POST', HEADERS_TEMPLATE, {"planType": exchange_plan}, cookies=cookie)
+        exchange_response = make_request(req_exchange_url, 'POST', req_headers, {"planType": exchange_plan}, cookies=cookie)
         if exchange_response:
             try:
                 exchange_data = exchange_response.json()
