@@ -27,20 +27,24 @@ ENV_PUSH_KEY = "PUSHDEER_SENDKEY"
 ENV_COOKIES = "GLADOS_COOKIES"
 ENV_EXCHANGE_PLAN = "GLADOS_EXCHANGE_PLAN"
 
+# DOMAIN CONFIG (支持环境变量 GLADOS_DOMAIN 自定义，默认 glados.space，支持回退到 glados.cloud)
+GLADOS_DOMAIN = os.environ.get("GLADOS_DOMAIN", "glados.space").strip()
+BASE_URL = f"https://{GLADOS_DOMAIN}"
+
 # API URLs
-CHECKIN_URL = "https://glados.cloud/api/user/checkin"
-STATUS_URL = "https://glados.cloud/api/user/status"
-POINTS_URL = "https://glados.cloud/api/user/points"
-EXCHANGE_URL = "https://glados.cloud/api/user/exchange"
+CHECKIN_URL = f"{BASE_URL}/api/user/checkin"
+STATUS_URL = f"{BASE_URL}/api/user/status"
+POINTS_URL = f"{BASE_URL}/api/user/points"
+EXCHANGE_URL = f"{BASE_URL}/api/user/exchange"
 
 # POST DATA
-CHECKIN_DATA = {"token": "glados.cloud"} 
+CHECKIN_DATA = {"token": GLADOS_DOMAIN}
 
 # Request Headers
 HEADERS_TEMPLATE = {
-    'referer': 'https://glados.cloud/console/checkin',
-    'origin': "https://glados.cloud",
-    'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36",
+    'referer': f"{BASE_URL}/console/checkin",
+    'origin': BASE_URL,
+    'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     'content-type': 'application/json;charset=UTF-8'
 }
 
