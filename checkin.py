@@ -153,7 +153,7 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
 
         if "Checkin! Got" in response_message:
             status_msg = f"签到成功，获得 {points_gained} 积分"
-        elif "Checkin Repeats!" in response_message or "Already checked in" in response_message or checkin_data.get("checkedIn") is True:
+        elif "Checkin Repeats!" in response_message or "Already checked in" in response_message or "observation logged" in response_message or checkin_data.get("checkedIn") is True or checkin_data.get("repeated") is True:
             status_msg = "重复签到，明天再来"
             points_gained = "0"
         else:
