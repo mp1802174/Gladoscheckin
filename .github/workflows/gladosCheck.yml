@@ -18,13 +18,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: ["3.12"]
 
     steps:
     - uses: actions/checkout@v4
 
     - name: set up python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -56,6 +56,3 @@ jobs:
         retain_days: 7
         keep_minimum_runs: 10
         delete_run_by_conclusion_pattern: success
-
-
-
