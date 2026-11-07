@@ -113,6 +113,27 @@ def make_request(url: str, method: str, headers: Dict[str, str], data: Optional[
 
 
 def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str, str, str]:
+    # 支持在 cookie 后面用 # 指定域名，例如: cookie#glados.rocks
+    target_domain = os.environ.get("GLADOS_DOMAIN", "railgun.info").strip()
+    if "#" in cookie:
+        cookie, custom_domain = cookie.split("#", 1)
+        if custom_domain.strip():
+            target_domain = custom_domain.strip()
+    elif "gld:" in cookie:
+        target_domain = "glados.rocks"
+    
+    base_url = f"https://{target_domain}"
+    req_checkin_url = f"{base_url}/api/user/checkin"
+    req_status_url = f"{base_url}/api/user/status"
+    req_points_url = f"{base_url}/api/user/points"
+    req_exchange_url = f"{base_url}/api/user/exchange"
+    req_checkin_data = {"token": target_domain}
+    req_headers = {
+        "referer": f"{base_url}/console/checkin",
+        "origin": base_url,
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "content-type": "application/json;charset=UTF-8"
+    }
 
     status_msg = "签到请求失败"
     points_gained = "0"
