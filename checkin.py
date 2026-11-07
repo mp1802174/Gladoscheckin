@@ -27,8 +27,8 @@ ENV_PUSH_KEY = "PUSHDEER_SENDKEY"
 ENV_COOKIES = "GLADOS_COOKIES"
 ENV_EXCHANGE_PLAN = "GLADOS_EXCHANGE_PLAN"
 
-# DOMAIN CONFIG (支持环境变量 GLADOS_DOMAIN 自定义，默认 glados.space，支持回退到 glados.cloud)
-GLADOS_DOMAIN = os.environ.get("GLADOS_DOMAIN", "glados.space").strip()
+# DOMAIN CONFIG (支持环境变量 GLADOS_DOMAIN 自定义，默认 railgun.info，支持回退到 glados.cloud)
+GLADOS_DOMAIN = os.environ.get("GLADOS_DOMAIN", "railgun.info").strip()
 BASE_URL = f"https://{GLADOS_DOMAIN}"
 
 # API URLs
@@ -131,7 +131,7 @@ def checkin_and_process(cookie: str, exchange_plan: str) -> Tuple[str, str, str,
 
         if "Checkin! Got" in response_message:
             status_msg = f"签到成功，获得 {points_gained} 积分"
-        elif "Checkin Repeats!" in response_message:
+        elif "Checkin Repeats!" in response_message or "Already checked in" in response_message or checkin_data.get("checkedIn") is True:
             status_msg = "重复签到，明天再来"
             points_gained = "0"
         else:
